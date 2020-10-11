@@ -1,6 +1,2 @@
-.idea
-**.*github.com*
-**.src
-**.*.odt
-**.root
-
+/lab*/src
+/lab*/pkg
