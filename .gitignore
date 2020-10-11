@@ -1,2 +1,3 @@
-/lab*/src
-/lab*/pkg
+src
+pkg
+.idea
