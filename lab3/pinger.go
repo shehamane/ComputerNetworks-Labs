@@ -1,12 +1,18 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/go-ping/ping"
 )
 
+
 func main() {
-	pinger, err := ping.NewPinger("www.google.com")
+	var host = flag.String("h", "", "Host address")
+	flag.Parse()
+
+	pinger, err := ping.NewPinger(*host)
+	pinger.Count = 10
 
 	if err != nil {
 		fmt.Printf("ERROR: %s\n", err.Error())
@@ -27,5 +33,9 @@ func main() {
 	}
 	fmt.Printf("PING %s (%s):\n", pinger.Addr(), pinger.IPAddr())
 
-	pinger.Run()
+	err = pinger.Run()
+	if err != nil {
+		fmt.Printf("ERROR: %s\n", err.Error())
+		return
+	}
 }
