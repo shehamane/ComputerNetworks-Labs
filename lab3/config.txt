@@ -1,0 +1,3 @@
+smtp.mail.ru:465
+kurigohan_smtp@mail.ru
+kurikuri933
