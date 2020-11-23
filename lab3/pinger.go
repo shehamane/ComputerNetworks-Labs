@@ -33,6 +33,7 @@ func main() {
 	}
 	fmt.Printf("PING %s (%s):\n", pinger.Addr(), pinger.IPAddr())
 
+	pinger.SetPrivileged(true)
 	err = pinger.Run()
 	if err != nil {
 		fmt.Printf("ERROR: %s\n", err.Error())

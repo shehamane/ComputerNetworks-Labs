@@ -17,6 +17,7 @@ func main() {
 
 	for i:=0; i<*num; i++{
 		pingers[i], _ = ping.NewPinger(*host)
+		pingers[i].SetPrivileged(true)
 		//pingers[i].Count = 2
 		pingers[i].OnRecv = func(pkt *ping.Packet) {
 			fmt.Printf("%d bytes from %s: icmp_seq=%d time=%v\n",
