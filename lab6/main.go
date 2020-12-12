@@ -14,7 +14,7 @@ func showForm(w http.ResponseWriter) {
 	<div>
 		<form action="/proxy" method="get">
 			<input type="text" name="url"/>
-			<input type="submit"/>
+			<input type="submit"/> 
 		</form>
 	</div>`)
 }
@@ -41,21 +41,28 @@ func isElem(node *html.Node, tag string) bool {
 }
 
 func findAndFix(node *html.Node, URL string) {
+	if node == nil{
+		return
+	}
 	if isElem(node, "a") {
 		parsedURL, _ := url.Parse(getAttr(node, "href"))
-		if parsedURL.Host == "" {
-			changeAttr(node, "href", URL + "/")
+		if parsedURL.Scheme == "" && parsedURL.Host == "" {
+			changeAttr(node, "href", URL+"/")
 		}
-		changeAttr(node, "href", "http://localhost:3000/proxy?url=")
+		changeAttr(node, "href", "/proxy?url=")
+
 	}
 	if isElem(node, "img") {
 		parsedURL, _ := url.Parse(getAttr(node, "src"))
-		if parsedURL.Scheme == "" {
-			changeAttr(node, "src", URL + "/")
+		if parsedURL.Scheme == "" && parsedURL.Host == "" {
+			changeAttr(node, "src", URL+"/")
 		}
 	}
-	if isElem(node, "link"){
-		changeAttr(node, "href", URL + "/")
+	if isElem(node, "link") {
+		parsedURL, _ := url.Parse(getAttr(node, "href"))
+		if parsedURL.Scheme == "" && parsedURL.Host == "" {
+			changeAttr(node, "href", URL+"/")
+		}
 	}
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
 		findAndFix(child, URL)
@@ -81,9 +88,9 @@ func proxy(w http.ResponseWriter, URL string) {
 	parsedURL, _ := url.Parse(URL)
 	mainURL := parsedURL.Scheme + "://" + parsedURL.Host + "/"
 	doc := fixLinks(resp, mainURL)
-	html.Render(w, doc)
 	copyHeader(w.Header(), resp.Header)
 	w.WriteHeader(resp.StatusCode)
+	html.Render(w, doc)
 }
 
 func handleHTTP(w http.ResponseWriter, r *http.Request) {
@@ -94,11 +101,13 @@ func handleHTTP(w http.ResponseWriter, r *http.Request) {
 		proxy(w, r.Form.Get("url"))
 	} else {
 		showForm(w)
-
 	}
 }
 func copyHeader(dst, src http.Header) {
 	for k, vv := range src {
+		if k == "Content-Security-Policy"{
+			continue
+		}
 		for _, v := range vv {
 			dst.Add(k, v)
 		}
