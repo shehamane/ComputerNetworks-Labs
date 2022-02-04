@@ -89,7 +89,8 @@ func main() {
 			message, _ := reader.ReadString('\n')
 			fmt.Print("Message Received:", message)
 			if strings.TrimSpace(message) == "exit" {
-				conn.Write([]byte("Вы покинули сервер." + "\n"))
+				msg := []byte("Вы покинули сервер." + "\n")
+				conn.Write(msg)
 				conn.Close()
 				break
 			}
